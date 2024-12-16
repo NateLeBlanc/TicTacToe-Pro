@@ -1,0 +1,15 @@
+*.suo
+*.user
+bin
+obj
+**/.vs/
+.vs
+.vscode
+.config/
+packages
+*.db
+**/publish/*
+**/.idea/*
+
+# nohup logs
+*.out
