@@ -2,6 +2,9 @@
 
 A simple Tic-Tac-Toe game.
 
+### Current Features
+- A two player tic-tac-toe game
+
 ### Planned Features
 - Pro-01: Add a score board with a database to keep track of the players' names, win, and loses.
 - Pro-02: Add a bot / AI
