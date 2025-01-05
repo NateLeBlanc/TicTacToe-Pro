@@ -1,6 +1,6 @@
 # TicTacToe-Pro
 
-A simple Tic-Tac-Toe game.
+A tic tac toe game to showcase my abilities in database use, project design, reinforcement learning, and game design.
 
 ### Current Features
 - A two player tic-tac-toe game
