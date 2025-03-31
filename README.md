@@ -14,3 +14,4 @@ A tic tac toe game to showcase my abilities in database use, project design, rei
 - Pro-06: Make a hidden board so that the display isn't shown until the end of the game. invalid moves aren't recorded
 - Pro-07: Give recorded players elo rankings
 - Pro-08: If AI is implemented, make it so that the AI learns from its loses and other players games and strategies
+- Pro-09: Add "upgrades" that change the board a bit making it so the Player has to decide to get the power up or continue on playing
