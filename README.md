@@ -16,4 +16,5 @@ A tic tac toe game to showcase my abilities in database use, project design, rei
 - [ ] Pro-07: Give recorded players elo rankings
 - [ ] Pro-08: If AI is implemented, make it so that the AI learns from its loses and other players games and strategies
 - [ ] Pro-09: Add "upgrades" that change the board a bit making it so the Player has to decide to get the power up or continue on playing
-- [ ] Pro-10: Add Gamemodes (timer during turns, endless, expanding board, classic) 
+- [ ] Pro-10: Add Gamemodes (timer during turns, endless, expanding board, classic)
+- [ ] Pro-11: Add Game seeds to playing
