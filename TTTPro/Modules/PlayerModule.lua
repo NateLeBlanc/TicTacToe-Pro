@@ -1,5 +1,8 @@
 local player = {}
 
+local generateLineCoords
+local isWinningLine
+
 function player.OnClick(gameBoard, currentPlayer, GridOptions, MouseObj)
     if MouseObj.button ~= 1 then return gameBoard, currentPlayer end
 
@@ -20,72 +23,78 @@ function player.OnClick(gameBoard, currentPlayer, GridOptions, MouseObj)
 end
 
 function player.CheckWin(gameBoard, gridSize)
-    local function isWinningLine(values)
-        local firstValue = values[1]
-        if firstValue == "" then return false end
-        for i = 2, #values do
-            if values[i] ~= firstValue then
-                return false
-            end
-        end
-        return true
-    end
-
-    -- check row for win
-    for row = 1, gridSize do
-        local values = {}
-        for col = 1, gridSize do
-            table.insert(values, gameBoard[row][col].value)
-        end
-        if isWinningLine(values) then
-            return values[1]
-        end
-    end
-
-    for col = 1, gridSize do
-        local values = {}
-        for row = 1, gridSize do
-            table.insert(values, gameBoard[row][col].value)
-        end
-        if isWinningLine(values) then
-            return values[1] -- Winner
-        end
-    end
-
-    -- Check top-left to bottom-right diagonal
-    local diag1 = {}
     for i = 1, gridSize do
-        table.insert(diag1, gameBoard[i][i].value)
-    end
-    if isWinningLine(diag1) then
-        return diag1[1]
+        -- Check row
+        local rowCoords = generateLineCoords("row", i, gridSize)
+        if isWinningLine(gameBoard, rowCoords) then
+            return gameBoard[i][1].value
+        end
+
+        -- Check column
+        local colCoords = generateLineCoords("col", i, gridSize)
+        if isWinningLine(gameBoard, colCoords) then
+            return gameBoard[1][i].value
+        end
     end
 
-    -- Check top-right to bottom-left diagonal
-    local diag2 = {}
-    for i = 1, gridSize do
-        table.insert(diag2, gameBoard[i][gridSize - i + 1].value)
-    end
-    if isWinningLine(diag2) then
-        return diag2[1]
+    -- Diagonals
+    local diag1 = generateLineCoords("diag1", nil, gridSize)
+    if isWinningLine(gameBoard, diag1) then
+        return gameBoard[1][1].value
     end
 
-    -- Check for tie
-    local isFull = true
+    local diag2 = generateLineCoords("diag2", nil, gridSize)
+    if isWinningLine(gameBoard, diag2) then
+        return gameBoard[1][gridSize].value
+    end
+
+    -- Tie check
     for row = 1, gridSize do
         for col = 1, gridSize do
             if gameBoard[row][col].value == "" then
-                isFull = false
-                break
+                return nil
             end
         end
     end
 
-    if isFull then
-        return "Tie"
+    return "Tie"
+end
+
+isWinningLine = function(gameBoard, coords)
+    local firstValue = gameBoard[coords[1][1]][coords[1][2]].value
+    if firstValue == "" then return false end
+
+    for i = 2, #coords do
+        local row, col = coords[i][1], coords[i][2]
+        if gameBoard[row][col].value ~= firstValue then
+            return false
+        end
+    end
+    return true
+end
+
+generateLineCoords = function(lineType, index, gridSize)
+    local coords = {}
+
+    if lineType == "row" then
+        for col = 1, gridSize do
+            table.insert(coords, {index, col})
+        end
+    elseif lineType == "col" then
+        for row = 1, gridSize do
+            table.insert(coords, {row, index})
+        end
+    elseif lineType == "diag1" then
+        for i = 1, gridSize do
+            table.insert(coords, {i, i})
+        end
+    elseif lineType == "diag2" then
+        for i = 1, gridSize do
+            table.insert(coords, {i, gridSize - i + 1})
+        end
     end
 
-    return nil
+    return coords
 end
 
 return player
