@@ -44,4 +44,14 @@ function draw.DrawBoard(gameBoard, GridOptions)
     end
 end
 
+function draw.WinningText(winnerPlayer)
+    if winnerPlayer == "Tie" then
+        love.graphics.printf("It's a tie!", 0, 20, love.graphics.getWidth(), "center")
+    elseif winnerPlayer then
+        love.graphics.setColor(1, 0, 0)
+        love.graphics.printf("Winner: " .. winnerPlayer, 0, 20, love.graphics.getWidth(), "center")
+        love.graphics.setColor(1, 1, 1)
+    end
+end
+
 return draw
