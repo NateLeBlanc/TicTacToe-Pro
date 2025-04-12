@@ -2,14 +2,17 @@ if arg[2] == "debug" then
     require("lldebugger").start()
 end
 
+local config = require("Modules.ConfigModule")
+config.load()
+
 local draw = require("Modules.DrawModule")
 local player = require("Modules.PlayerModule")
 local menu = require("Modules.MenuModule")
 
-local gameState = "menu"
-local gridSize = 3
-local cellSize = 100
-local currentPlayer = "X"
+local gameState = config.data.gameState
+local gridSize = config.data.Board.gridSize
+local cellSize = config.data.Board.cellSize
+local currentPlayer = config.data.Game.currentPlayer
 local winnerPlayer = nil
 
 local gameBoard = {}

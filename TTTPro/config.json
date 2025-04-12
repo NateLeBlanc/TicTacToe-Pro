@@ -1,0 +1,16 @@
+{
+    "gameState": "menu",
+    "MainMenu":{
+        "buttonWidth": 200,
+        "buttonHeight": 50,
+        "buttonSpacing": 20
+    },
+    "Board":{
+        "gridSize": 3,
+        "cellSize": 100
+    },
+    "Game": {
+        "maxPlayers": 2,
+        "currentPlayer": "X"
+    }
+}
