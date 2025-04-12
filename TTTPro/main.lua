@@ -7,21 +7,23 @@ local player = require("Modules.PlayerModule")
 
 local gridSize = 3
 local cellSize = 100
+local currentPlayer = "X"
 
-local grid = {}
+local gameBoard = {}
 local GridOptions = {gridSize = gridSize, cellSize = cellSize}
 
 function love.load()
+    print("Game Start")
     local screenWidth = love.graphics.getWidth()
     local screenHeight = love.graphics.getHeight()
-    grid = draw.DrawBoard(screenWidth, screenHeight, GridOptions)
+    gameBoard = draw.CreateBoard(screenWidth, screenHeight, GridOptions)
 end
 
 function love.draw()
-    grid = player.AddColorGreen(grid, GridOptions)
+    draw.DrawBoard(gameBoard, GridOptions)
 end
 
 function love.mousepressed(x, y, button)
     local MouseObj = {x = x, y = y, button = button}
-    grid = player.OnClick(grid, GridOptions, MouseObj)
+    gameBoard, currentPlayer = player.OnClick(gameBoard, currentPlayer, GridOptions, MouseObj)
 end
