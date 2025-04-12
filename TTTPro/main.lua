@@ -4,7 +4,9 @@ end
 
 local draw = require("Modules.DrawModule")
 local player = require("Modules.PlayerModule")
+local menu = require("Modules.MenuModule")
 
+local gameState = "menu"
 local gridSize = 3
 local cellSize = 100
 local currentPlayer = "X"
@@ -17,18 +19,29 @@ function love.load()
     print("Game Start")
     local screenWidth = love.graphics.getWidth()
     local screenHeight = love.graphics.getHeight()
+    menu.LoadMenu(screenWidth, screenHeight)
     gameBoard = draw.CreateBoard(screenWidth, screenHeight, GridOptions)
 end
 
 function love.draw()
-    draw.DrawBoard(gameBoard, GridOptions)
-    draw.WinningText(winnerPlayer)
+    if gameState == "menu" then
+        menu.DrawMenu()
+    elseif gameState == "playing" then
+        draw.DrawBoard(gameBoard, GridOptions)
+        draw.WinningText(winnerPlayer)
+    end
 end
 
 function love.mousepressed(x, y, button)
-    if winnerPlayer then return end
-
     local MouseObj = {x = x, y = y, button = button}
-    gameBoard, currentPlayer = player.OnClick(gameBoard, currentPlayer, GridOptions, MouseObj)
-    winnerPlayer = player.CheckWin(gameBoard, GridOptions.gridSize)
+
+    if gameState == "menu" then
+        gameState = menu.MenuSelection(MouseObj)
+    elseif gameState == "playing" then
+        if winnerPlayer then return end
+
+        gameBoard, currentPlayer = player.SelectCell(gameBoard, currentPlayer, GridOptions, MouseObj)
+        winnerPlayer = player.CheckWin(gameBoard, GridOptions.gridSize)
+    end
+
 end

@@ -3,7 +3,7 @@ local player = {}
 local generateLineCoords
 local isWinningLine
 
-function player.OnClick(gameBoard, currentPlayer, GridOptions, MouseObj)
+function player.SelectCell(gameBoard, currentPlayer, GridOptions, MouseObj)
     if MouseObj.button ~= 1 then return gameBoard, currentPlayer end
 
     for row = 1, GridOptions.gridSize do
