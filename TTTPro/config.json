@@ -1,0 +1,14 @@
+{
+    "Button":{
+        "width": 200,
+        "height": 50,
+        "padding": 20
+    },
+    "Board":{
+        "gridSize": 3,
+        "cellSize": 100
+    },
+    "Game": {
+        "maxPlayers": 2
+    }
+}

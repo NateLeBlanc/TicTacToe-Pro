@@ -1,9 +1,11 @@
+local CurrentPlayer = require("ValueTables.CurrentPlayer")
+
 local player = {}
 
 local generateLineCoords
 local isWinningLine
 
-function player.OnClick(gameBoard, currentPlayer, GridOptions, MouseObj)
+function player.SelectCell(gameBoard, currentPlayer, GridOptions, MouseObj)
     if MouseObj.button ~= 1 then return gameBoard, currentPlayer end
 
     for row = 1, GridOptions.gridSize do
@@ -13,7 +15,7 @@ function player.OnClick(gameBoard, currentPlayer, GridOptions, MouseObj)
                 MouseObj.y >= cell.y and MouseObj.y < cell.y + GridOptions.cellSize then
                 if cell.value == "" then
                     cell.value = currentPlayer
-                    currentPlayer = (currentPlayer == "X") and "O" or "X"
+                    currentPlayer = (currentPlayer == CurrentPlayer.X) and CurrentPlayer.O or CurrentPlayer.X
                 end
             end
         end
