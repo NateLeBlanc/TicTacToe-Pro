@@ -54,7 +54,6 @@ function love.mousepressed(x, y, button)
         gameBoard, currentPlayer = player.SelectCell(gameBoard, currentPlayer, GridOptions, MouseObj)
         winnerPlayer = player.CheckWin(gameBoard, GridOptions.gridSize)
 
-        -- TODO: make buttons appear under board not on top of board
         if winnerPlayer then
             gameState = GameState.END
 
