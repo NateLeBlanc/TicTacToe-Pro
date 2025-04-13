@@ -1,3 +1,6 @@
+local config = require("Modules.ConfigModule")
+config.load()
+
 local draw = {}
 
 function draw.CreateBoard(screenWidth, screenHeight, GridOptions)
@@ -52,6 +55,23 @@ function draw.WinningText(winnerPlayer)
         love.graphics.printf("Winner: " .. winnerPlayer, 0, 20, love.graphics.getWidth(), "center")
         love.graphics.setColor(1, 1, 1)
     end
+end
+
+function draw.DrawGameOverButtons(screenWidth, screenHeight)
+    local buttonWidth = config.data.Button.width
+    local buttonHeight = config.data.Button.height
+    local buttonPadding = config.data.Button.padding
+
+    local centerX = screenWidth / 2
+    local startY = screenHeight / 2 + 60
+
+    love.graphics.setColor(0.2, 0.6, 0.9)
+    love.graphics.rectangle("fill", centerX - buttonWidth - buttonPadding / 2, startY, buttonWidth, buttonHeight)
+    love.graphics.rectangle("fill", centerX + buttonPadding / 2, startY, buttonWidth, buttonHeight)
+
+    love.graphics.setColor(1, 1, 1)
+    love.graphics.printf("Main Menu", centerX - buttonWidth - buttonPadding / 2, startY + 15, buttonWidth, "center")
+    love.graphics.printf("Restart", centerX + buttonPadding / 2, startY + 15, buttonWidth, "center")
 end
 
 return draw

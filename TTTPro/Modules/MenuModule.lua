@@ -1,3 +1,5 @@
+local GameState = require("ValueTables.GameState")
+
 local menu = {}
 
 local buttonWidth = 200
@@ -28,7 +30,7 @@ function menu.LoadMenu(screenWidth, screenHeight)
             width = buttonWidth,
             height = buttonHeight,
             action = function()
-                return "playing"
+                return GameState.PLAYING
             end
         }
     }
@@ -37,23 +39,23 @@ end
 function menu.DrawMenu()
     love.graphics.printf("TIC TAC TOE", 0, 100, love.graphics.getWidth(), "center")
 
-    for _, btn in ipairs(buttons) do
-        love.graphics.rectangle("line", btn.x, btn.y, btn.width, btn.height)
-        love.graphics.printf(btn.label, btn.x, btn.y + 15, btn.width, "center")
+    for _, button in ipairs(buttons) do
+        love.graphics.rectangle("line", button.x, button.y, button.width, button.height)
+        love.graphics.printf(button.label, button.x, button.y + 15, button.width, "center")
     end
 end
 
 function menu.MenuSelection(MouseObj)
-    for _, btn in ipairs(buttons) do
-        if MouseObj.x >= btn.x and MouseObj.x <= btn.x + btn.width and
-        MouseObj.y >= btn.y and MouseObj.y <= btn.y + btn.height then
-            if btn.action then
-                local result = btn.action()
+    for _, button in ipairs(buttons) do
+        if MouseObj.x >= button.x and MouseObj.x <= button.x + button.width and
+        MouseObj.y >= button.y and MouseObj.y <= button.y + button.height then
+            if button.action then
+                local result = button.action()
                 if result then return result end
             end
         end
     end
-    return "menu"
+    return GameState.MENU
 end
 
 return menu
