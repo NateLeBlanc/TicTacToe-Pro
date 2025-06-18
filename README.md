@@ -8,7 +8,7 @@ A tic tac toe game to showcase my abilities in database use, project design, rei
 ### Planned Features
 - [ ] Pro-01_1: Add a score board for consective wins
 - [ ] Pro-01_2: Add a database to keep track of the players names, win, and loses.
-- [ ] Pro-02: Add a bot (1-player mode)
+- [X] Pro-02: Add a bot (1-player mode)
 - [ ] Pro-03: Add difficulty to the bot (Easy, Medium, Hard)
 - [ ] Pro-04: Make an adaptable board size (still scale as a square ie 4x4, 5x5, etc.)
 - [ ] Pro-05: Make a random board size mode where the objective is still to get 3 in a row but some cells are blocked
