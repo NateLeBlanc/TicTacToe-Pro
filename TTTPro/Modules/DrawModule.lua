@@ -28,6 +28,7 @@ function draw.DrawBoard(gameBoard, GridOptions)
         for col = 1, GridOptions.gridSize do
             local cell = gameBoard[row][col]
 
+            print("Rectangle values:", cell.x, cell.y, GridOptions.cellSize, GridOptions.cellSize)
             -- Draw cell border
             love.graphics.rectangle("line", cell.x, cell.y, GridOptions.cellSize, GridOptions.cellSize)
 
