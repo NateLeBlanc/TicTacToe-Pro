@@ -20,7 +20,8 @@ function menu.LoadMenu(screenWidth, screenHeight)
             width = buttonWidth,
             height = buttonHeight,
             action = function()
-                print("1 Player selected") -- Placeholder
+                menu.isBotActive = true
+                return GameState.PLAYING
             end
         },
         {
@@ -30,6 +31,7 @@ function menu.LoadMenu(screenWidth, screenHeight)
             width = buttonWidth,
             height = buttonHeight,
             action = function()
+                menu.isBotActive = false
                 return GameState.PLAYING
             end
         }
