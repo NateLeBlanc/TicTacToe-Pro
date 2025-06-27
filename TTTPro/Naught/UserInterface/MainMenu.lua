@@ -1,4 +1,4 @@
-local GameState = require("ValueTables.GameState")
+local GameState = require("Naught.Components.GameState")
 
 local menu = {}
 
@@ -6,6 +6,11 @@ local buttonWidth = 200
 local buttonHeight = 50
 local buttonSpacing = 20
 local buttons = {}
+
+-- TODO: 
+-- Encapsulate menu logic with class or table like Menu:draw() or Menu:Update()
+-- Use Dependecy Injection
+-- Seperate rendering and logic (ie. remove love.graphics)
 
 function menu.LoadMenu(screenWidth, screenHeight)
     local totalHeight = (buttonHeight * 2) + buttonSpacing

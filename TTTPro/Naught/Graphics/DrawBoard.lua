@@ -1,4 +1,4 @@
-local config = require("Modules.ConfigModule")
+local config = require("Naught.Configuration.GameConfiguration")
 config.load()
 
 local draw = {}

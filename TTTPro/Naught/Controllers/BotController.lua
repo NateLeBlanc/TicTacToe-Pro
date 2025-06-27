@@ -1,4 +1,4 @@
-local CurrentPlayer = require("ValueTables.CurrentPlayer")
+local CurrentPlayer = require("Naught.Components.CurrentPlayer")
 local Bot = {}
 
 function Bot.BotMove(gameBoard, currentPlayer)

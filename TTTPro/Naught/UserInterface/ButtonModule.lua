@@ -1,4 +1,4 @@
-local config = require("Modules.ConfigModule")
+local config = require("Naught.Configuration.GameConfiguration")
 
 local ButtonModule = {}
 
