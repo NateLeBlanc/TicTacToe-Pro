@@ -10,5 +10,9 @@
     },
     "Game": {
         "maxPlayers": 2
+    },
+    "GridOptions":{
+        "rows": 3,
+        "columns": 3
     }
 }
