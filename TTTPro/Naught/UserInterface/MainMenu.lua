@@ -53,10 +53,10 @@ function menu.DrawMainMenu()
     end
 end
 
-function menu.MenuSelection(MouseObj)
+function menu.MenuSelection(MouseClickEvent)
     for _, button in ipairs(buttons) do
-        if MouseObj.x >= button.x and MouseObj.x <= button.x + button.width and
-        MouseObj.y >= button.y and MouseObj.y <= button.y + button.height then
+        if MouseClickEvent.x >= button.x and MouseClickEvent.x <= button.x + button.width and
+        MouseClickEvent.y >= button.y and MouseClickEvent.y <= button.y + button.height then
             if button.action then
                 local result = button.action()
                 if result then return result end

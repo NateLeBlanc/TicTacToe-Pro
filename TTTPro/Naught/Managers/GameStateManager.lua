@@ -4,15 +4,15 @@ local FontManager = require("Naught.Managers.FontManager")
 local DrawBoard = require("Naught.Graphics.DrawBoard")
 
 local GameStateManager = {}
+local Logger = require("Libraries.logger")
 
 local winningPlayer = nil
 local activePiece = nil
 local gameBoard = nil
 local gridOptions = nil
 
-
 function GameStateManager.Init(mainMenu, config)
-    print("Game Start")
+    Logger.info("Game Start")
 
     winningPlayer = nil
     activePiece = ActivePiece.X
@@ -25,7 +25,7 @@ function GameStateManager.Init(mainMenu, config)
     end
     mainMenu.LoadMenu(screenWidth, screenHeight)
     gameBoard = DrawBoard.CreateBoard(screenWidth, screenHeight, gridOptions)
-    print("Debug: currentPlayer initialized to", activePiece)
+    Logger.debug("CurrentPlayer initialized to {activePiece}", activePiece)
 end
 
 function GameStateManager.Render(mainMenu, buttonModule)
@@ -43,33 +43,36 @@ function GameStateManager.Render(mainMenu, buttonModule)
 end
 
 function GameStateManager.HandleMousePress(x, y, button, mainMenu, buttonModule, playerController, botController)
-    local MouseObj = {x = x, y = y, button = button}
+    local MouseClickEvent = {x = x, y = y, button = button}
 
     if GameStateManager.currentState == GameState.MAINMENU then
-        GameStateManager.currentState = mainMenu.MenuSelection(MouseObj)
+        GameStateManager.currentState = mainMenu.MenuSelection(MouseClickEvent)
     elseif GameStateManager.currentState == GameState.PLAYING then
-        GameStateManager.HandlePlayingMousePress(MouseObj, mainMenu, buttonModule, playerController, botController)
+        GameStateManager.PlayingGameHandler(MouseClickEvent, mainMenu, buttonModule, playerController, botController)
     elseif GameStateManager.currentState == GameState.END then
-        GameStateManager.HandleEndScreenMousePress(MouseObj, buttonModule)
+        GameStateManager.EndGameHandler(MouseClickEvent, buttonModule)
     end
 end
 
-function GameStateManager.HandlePlayingMousePress(MouseObj, mainMenu, buttonModule, playerController, botController)
-    print("Debug: currentPlayer before move:", activePiece)
 
+-- TODO: Break into PlayerMoveHandler and BotMoveHandler and CheckWinCondition
+function GameStateManager.HandlePlayerMove(MouseClickEvent, playerController)
     if activePiece == ActivePiece.X then
-        gameBoard, activePiece = playerController.PlayerMove(gameBoard, activePiece, gridOptions, MouseObj)
-        print("Debug: currentPlayer after PlayerMove:", activePiece)
+        gameBoard, activePiece = playerController.PlayerMove(gameBoard, activePiece, gridOptions, MouseClickEvent)
     end
+end
+
+function GameStateManager.HandleBotMove(mainMenu, botController)
     if mainMenu.isBotActive and activePiece == ActivePiece.O and not winningPlayer then
         gameBoard, activePiece = botController.BotMove(gameBoard, ActivePiece.O)
-        print("Debug: currentPlayer after BotMove:", activePiece)
     end
+end
 
+function GameStateManager.CheckWinCondition(playerController, buttonModule)
     if gridOptions and gridOptions.gridSize then
         winningPlayer = playerController.CheckWin(gameBoard, gridOptions.gridSize)
     else
-        print("Error in GameStateManager: gridSize is nil")
+        Logger.error("GameStateManager: gridSize is nil")
     end
 
     if winningPlayer then
@@ -77,8 +80,14 @@ function GameStateManager.HandlePlayingMousePress(MouseObj, mainMenu, buttonModu
     end
 end
 
-function GameStateManager.HandleEndScreenMousePress(MouseObj, buttonModule)
-    buttonModule.HandleClick(MouseObj.x, MouseObj.y)
+function GameStateManager.PlayingGameHandler(MouseClickEvent, mainMenu, buttonModule, playerController, botController)
+    GameStateManager.HandlePlayerMove(MouseClickEvent, playerController)
+    GameStateManager.HandleBotMove(mainMenu, botController)
+    GameStateManager.CheckWinCondition(playerController, buttonModule)
+end
+
+function GameStateManager.EndGameHandler(MouseClickEvent, buttonModule)
+    buttonModule.HandleClick(MouseClickEvent.x, MouseClickEvent.y)
 end
 
 function GameStateManager.SetupEndState(buttonModule)

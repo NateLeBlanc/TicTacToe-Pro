@@ -8,7 +8,6 @@ _config.load()
 local GameStateManager = require("Naught.Managers.GameStateManager")
 local FontManager = require("Naught.Managers.FontManager")
 
-local drawBoard = require("Naught.Graphics.DrawBoard")
 local playerController = require("Naught.Controllers.PlayerController")
 local botController = require("Naught.Controllers.BotController")
 local mainMenu = require("Naught.UserInterface.MainMenu")
