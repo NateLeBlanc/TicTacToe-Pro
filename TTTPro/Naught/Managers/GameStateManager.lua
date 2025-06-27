@@ -12,7 +12,8 @@ local gameBoard = nil
 local gridOptions = nil
 
 function GameStateManager.Init(mainMenu, config)
-    Logger.info("Game Start")
+    GameStateManager.mainMenu = mainMenu
+    GameStateManager.config = config
 
     winningPlayer = nil
     activePiece = ActivePiece.X
@@ -23,37 +24,41 @@ function GameStateManager.Init(mainMenu, config)
     if(GameState.currentState == nil) then
         GameStateManager.currentState = GameState.MAINMENU
     end
-    mainMenu.LoadMenu(screenWidth, screenHeight)
+    GameStateManager.mainMenu.LoadMenu(screenWidth, screenHeight)
     gameBoard = DrawBoard.CreateBoard(screenWidth, screenHeight, gridOptions)
-    Logger.debug("CurrentPlayer initialized to {activePiece}", activePiece)
 end
 
-function GameStateManager.Render(mainMenu, buttonModule)
-    FontManager.GetFont()
+function GameStateManager.Render(buttonModule)
+        FontManager.GetFont()
 
     if GameStateManager.currentState == GameState.MAINMENU then
-        mainMenu.DrawMainMenu()
+        GameStateManager.mainMenu.DrawMainMenu()
     elseif GameStateManager.currentState == GameState.PLAYING then
-        DrawBoard.DrawBoard(gameBoard, gridOptions)
+        GameStateManager.RenderBoard()
     elseif GameStateManager.currentState == GameState.END then
-        DrawBoard.DrawBoard(gameBoard, gridOptions)
-        DrawBoard.WinningText(winningPlayer)
+        GameStateManager.RenderBoard()
         buttonModule.DrawButtons()
     end
 end
 
-function GameStateManager.HandleMousePress(x, y, button, mainMenu, buttonModule, playerController, botController)
+function GameStateManager.HandleMousePress(x, y, button, buttonModule, playerController, botController)
     local MouseClickEvent = {x = x, y = y, button = button}
 
     if GameStateManager.currentState == GameState.MAINMENU then
-        GameStateManager.currentState = mainMenu.MenuSelection(MouseClickEvent)
+        GameStateManager.currentState = GameStateManager.mainMenu.MenuSelection(MouseClickEvent)
     elseif GameStateManager.currentState == GameState.PLAYING then
-        GameStateManager.PlayingGameHandler(MouseClickEvent, mainMenu, buttonModule, playerController, botController)
+        GameStateManager.PlayingGameHandler(MouseClickEvent, buttonModule, playerController, botController)
     elseif GameStateManager.currentState == GameState.END then
         GameStateManager.EndGameHandler(MouseClickEvent, buttonModule)
     end
 end
 
+function GameStateManager.RenderBoard()
+    DrawBoard.DrawBoard(gameBoard, gridOptions)
+    if winningPlayer then
+        DrawBoard.WinningText(winningPlayer)
+    end
+end
 
 -- TODO: Break into PlayerMoveHandler and BotMoveHandler and CheckWinCondition
 function GameStateManager.HandlePlayerMove(MouseClickEvent, playerController)
@@ -62,8 +67,8 @@ function GameStateManager.HandlePlayerMove(MouseClickEvent, playerController)
     end
 end
 
-function GameStateManager.HandleBotMove(mainMenu, botController)
-    if mainMenu.isBotActive and activePiece == ActivePiece.O and not winningPlayer then
+function GameStateManager.HandleBotMove(botController)
+    if GameStateManager.mainMenu.isBotActive and activePiece == ActivePiece.O and not winningPlayer then
         gameBoard, activePiece = botController.BotMove(gameBoard, ActivePiece.O)
     end
 end
@@ -80,9 +85,9 @@ function GameStateManager.CheckWinCondition(playerController, buttonModule)
     end
 end
 
-function GameStateManager.PlayingGameHandler(MouseClickEvent, mainMenu, buttonModule, playerController, botController)
+function GameStateManager.PlayingGameHandler(MouseClickEvent, buttonModule, playerController, botController)
     GameStateManager.HandlePlayerMove(MouseClickEvent, playerController)
-    GameStateManager.HandleBotMove(mainMenu, botController)
+    GameStateManager.HandleBotMove(botController)
     GameStateManager.CheckWinCondition(playerController, buttonModule)
 end
 
