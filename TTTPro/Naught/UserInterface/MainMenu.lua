@@ -9,8 +9,9 @@ local buttons = {}
 
 -- TODO: 
 -- Encapsulate menu logic with class or table like Menu:draw() or Menu:Update()
--- Use Dependecy Injection
--- Seperate rendering and logic (ie. remove love.graphics)
+-- Encapsulate button creation and rendering into a Button class or utility
+-- Use Dependecy Injection by passing screenWidth and screenHeight as parameters to avoid global dependecies
+-- Seperate rendering and logic (ie. remove love.graphics) into a Button:draw()
 
 function menu.LoadMenu(screenWidth, screenHeight)
     local totalHeight = (buttonHeight * 2) + buttonSpacing
@@ -43,7 +44,7 @@ function menu.LoadMenu(screenWidth, screenHeight)
     }
 end
 
-function menu.DrawMenu()
+function menu.DrawMainMenu()
     love.graphics.printf("TIC TAC TOE", 0, 100, love.graphics.getWidth(), "center")
 
     for _, button in ipairs(buttons) do
@@ -62,7 +63,7 @@ function menu.MenuSelection(MouseObj)
             end
         end
     end
-    return GameState.MENU
+    return GameState.MAINMENU
 end
 
 return menu

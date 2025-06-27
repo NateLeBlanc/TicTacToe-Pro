@@ -1,9 +1,11 @@
-local config = require("Naught.Configuration.GameConfiguration")
-config.load()
+local _config = require("Naught.Configuration.GameConfiguration")
+_config.load()
 
-local draw = {}
+local FontManager = require("Naught.Managers.FontManager")
 
-function draw.CreateBoard(screenWidth, screenHeight, GridOptions)
+local DrawBoard = {}
+
+function DrawBoard.CreateBoard(screenWidth, screenHeight, GridOptions)
     local gameBoard = {}
     local gridWidth = GridOptions.gridSize * GridOptions.cellSize
     local gridHeight = GridOptions.gridSize * GridOptions.cellSize
@@ -16,14 +18,14 @@ function draw.CreateBoard(screenWidth, screenHeight, GridOptions)
             gameBoard[row][col] = {
                 x = startCellX + (col - 1) * GridOptions.cellSize,
                 y = startCellY + (row - 1) * GridOptions.cellSize,
-                value = "" -- Holds 'X', 'O', or ''
+                placedPiece = "" -- Holds 'X', 'O', or ''
             }
         end
     end
     return gameBoard
 end
 
-function draw.DrawBoard(gameBoard, GridOptions)
+function DrawBoard.DrawBoard(gameBoard, GridOptions)
     for row = 1, GridOptions.gridSize do
         for col = 1, GridOptions.gridSize do
             local cell = gameBoard[row][col]
@@ -32,14 +34,18 @@ function draw.DrawBoard(gameBoard, GridOptions)
             -- Draw cell border
             love.graphics.rectangle("line", cell.x, cell.y, GridOptions.cellSize, GridOptions.cellSize)
 
+            if not cell.placedPiece then
+                print("Warning: cell.value is nil at row:", row, "col:", col)
+            end
+
             -- Draw X or O centered
-            if cell.value ~= "" then
-                local font = love.graphics.getFont()
-                local textWidth = font:getWidth(cell.value)
+            if cell.placedPiece and cell.placedPiece ~= "" then
+                local font = FontManager.GetFont()
+                local textWidth = font:getWidth(cell.placedPiece or "")
                 local textHeight = font:getHeight()
 
                 love.graphics.print(
-                    cell.value,
+                    cell.placedPiece,
                     cell.x + (GridOptions.cellSize - textWidth) / 2,
                     cell.y + (GridOptions.cellSize - textHeight) / 2
                 )
@@ -48,7 +54,7 @@ function draw.DrawBoard(gameBoard, GridOptions)
     end
 end
 
-function draw.WinningText(winnerPlayer)
+function DrawBoard.WinningText(winnerPlayer)
     if winnerPlayer == "Tie" then
         love.graphics.printf("It's a tie!", 0, 20, love.graphics.getWidth(), "center")
     elseif winnerPlayer then
@@ -58,21 +64,4 @@ function draw.WinningText(winnerPlayer)
     end
 end
 
-function draw.DrawGameOverButtons(screenWidth, screenHeight)
-    local buttonWidth = config.data.Button.width
-    local buttonHeight = config.data.Button.height
-    local buttonPadding = config.data.Button.padding
-
-    local centerX = screenWidth / 2
-    local startY = screenHeight / 2 + 60
-
-    love.graphics.setColor(0.2, 0.6, 0.9)
-    love.graphics.rectangle("fill", centerX - buttonWidth - buttonPadding / 2, startY, buttonWidth, buttonHeight)
-    love.graphics.rectangle("fill", centerX + buttonPadding / 2, startY, buttonWidth, buttonHeight)
-
-    love.graphics.setColor(1, 1, 1)
-    love.graphics.printf("Main Menu", centerX - buttonWidth - buttonPadding / 2, startY + 15, buttonWidth, "center")
-    love.graphics.printf("Restart", centerX + buttonPadding / 2, startY + 15, buttonWidth, "center")
-end
-
-return draw
+return DrawBoard

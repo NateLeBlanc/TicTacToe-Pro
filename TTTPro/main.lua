@@ -5,87 +5,38 @@ end
 local _config = require("Naught.Configuration.GameConfiguration")
 _config.load()
 
-local _drawModule = require("Naught.Graphics.DrawBoard")
-local _playerModule = require("Naught.Controllers.PlayerController")
-local _botModule = require("Naught.Controllers.BotController")
-local _menuModule = require("Naught.UserInterface.MainMenu")
-local _buttonModule = require("Naught.UserInterface.ButtonModule")
-local GameState = require("Naught.Components.GameState")
-local CurrentPlayer = require("Naught.Components.CurrentPlayer")
+local GameStateManager = require("Naught.Managers.GameStateManager")
+local FontManager = require("Naught.Managers.FontManager")
 
-local gameState = GameState.MENU
-local gridSize = _config.data.Board.gridSize
-local cellSize = _config.data.Board.cellSize
-local currentPlayer = CurrentPlayer.X
-local winnerPlayer = nil
-
-local gameBoard = {}
-local GridOptions = {gridSize = gridSize, cellSize = cellSize}
+local drawBoard = require("Naught.Graphics.DrawBoard")
+local playerController = require("Naught.Controllers.PlayerController")
+local botController = require("Naught.Controllers.BotController")
+local mainMenu = require("Naught.UserInterface.MainMenu")
+local buttonModule = require("Naught.UserInterface.ButtonModule")
 
 -- TODO:
 -- Seperate concerns (move initalization logic, game state management, and rendering into seperate modules)
 -- Use a game loop structure (check that update and draw are clean and only use module calls)
 -- Avoid any hardcoding
+-- Move game state management logic into `GameStateManager`
+-- Delegate board create and drawing to `DrawBoard`
+-- Encapsulate(How?) gameBoard and GridOptions into a Board object
+-- Use `GameStateManager` to hanlde transitions and delegate redering logic
 
--- FIXME: BUG #4
+-- FIXME: #4 Two Player only plays X
+-- FIXME: #5 Clicking outside of game grid counts as a turn
+
+-- IDEA: Speed up the pace of placemnt from bots for hard gamemodes (ie. start slow and then go faster)
 
 function love.load()
-    winnerPlayer = nil
-    currentPlayer = CurrentPlayer.X
-
-    print("Game Start")
-    local screenWidth = love.graphics.getWidth()
-    local screenHeight = love.graphics.getHeight()
-
-    _menuModule.LoadMenu(screenWidth, screenHeight)
-    gameBoard = _drawModule.CreateBoard(screenWidth, screenHeight, GridOptions)
+    FontManager.Init()
+    GameStateManager.Init(mainMenu, _config)
 end
 
 function love.draw()
-    if gameState == GameState.MENU then
-        _menuModule.DrawMenu()
-    elseif gameState == GameState.PLAYING then
-        _drawModule.DrawBoard(gameBoard, GridOptions)
-    elseif gameState == GameState.END then
-        _drawModule.DrawBoard(gameBoard, GridOptions)
-        _drawModule.WinningText(winnerPlayer)
-        _buttonModule.DrawButtons()
-    end
+    GameStateManager.Render(mainMenu, buttonModule)
 end
 
 function love.mousepressed(x, y, button)
-    local MouseObj = {x = x, y = y, button = button}
-
-    if gameState == GameState.MENU then
-        gameState = _menuModule.MenuSelection(MouseObj)
-    elseif gameState == GameState.PLAYING then
-        if currentPlayer == CurrentPlayer.X then
-            gameBoard, currentPlayer = _playerModule.PlayerMove(gameBoard, currentPlayer, GridOptions, MouseObj)
-        end
-        if _menuModule.isBotActive and currentPlayer == CurrentPlayer.O and not winnerPlayer then
-            gameBoard, currentPlayer = _botModule.BotMove(gameBoard, CurrentPlayer.O)
-        end
-
-        winnerPlayer = _playerModule.CheckWin(gameBoard, GridOptions.gridSize)
-
-        if winnerPlayer then
-            gameState = GameState.END
-
-            _buttonModule.ClearButtons()
-            _buttonModule.CreateButton("Restart", nil, nil, nil, nil, function()
-                gameState = GameState.PLAYING
-                _buttonModule.ClearButtons()
-                love.load()
-            end)
-            _buttonModule.CreateButton("Main Menu", nil, nil, nil, nil, function()
-                gameState = GameState.MENU
-                _buttonModule.ClearButtons()
-                love.load()
-                love.draw()
-            end)
-            _buttonModule.LayoutButtonsBelowBoard()
-        end
-    elseif gameState == GameState.END then
-        _buttonModule.HandleClick(MouseObj.x, MouseObj.y)
-    end
+    GameStateManager.HandleMousePress(x, y, button, mainMenu, buttonModule, playerController, botController)
 end

@@ -1,5 +1,5 @@
 local GameState = {
-    MENU = "menu",
+    MAINMENU = "mainMenu",
     PLAYING = "playing",
     END = "end"
 }
