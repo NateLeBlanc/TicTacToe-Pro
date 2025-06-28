@@ -4,13 +4,72 @@ end
 
 local _config = require("Naught.Configuration.GameConfiguration")
 
-local GameLoop = require("Naught.GameLoop")
-local GameStateManager = require("Naught.Managers.GameStateManager")
-local FontManager = require("Naught.Managers.FontManager")
-local playerController = require("Naught.Controllers.PlayerController")
-local botController = require("Naught.Controllers.BotController")
-local mainMenu = require("Naught.UserInterface.MainMenu")
-local buttonModule = require("Naught.UserInterface.ButtonModule")
+local DIContainer = require("Naught.DIContainer")
+local container = DIContainer.new()
+
+-- Register dependencies
+container:register("FontManager", function()
+    return require("Naught.Managers.FontManager")
+end)
+
+container:register("GameState", function()
+    return require("Naught.Components.GameState")
+end)
+
+container:register("ActivePiece", function()
+    return require("Naught.Components.ActivePiece")
+end)
+
+container:register("FontManager", function()
+    return require("Naught.Managers.FontManager")
+end)
+
+container:register("DrawBoard", function()
+    return require("Naught.Graphics.DrawBoard")
+end)
+
+container:register("Logger", function()
+    return require("Libraries.logger")
+end)
+
+container:register("GameStateManager", function()
+    local GameState = container:resolve("GameState")
+    local ActivePiece = container:resolve("ActivePiece")
+    local FontManager = container:resolve("FontManager")
+    local DrawBoard = container:resolve("DrawBoard")
+    local Logger = container:resolve("Logger")
+    local GameStateManager = require("Naught.Managers.GameStateManager")
+    return GameStateManager.new(GameState, ActivePiece, FontManager, DrawBoard, Logger)
+end)
+
+container:register("GameLoop", function()
+    return require("Naught.GameLoop")
+end)
+
+container:register("PlayerController", function()
+    return require("Naught.Controllers.PlayerController")
+end)
+
+container:register("BotController", function()
+    return require("Naught.Controllers.BotController")
+end)
+
+container:register("MainMenu", function()
+    return require("Naught.UserInterface.MainMenu")
+end)
+
+container:register("ButtonModule", function()
+    return require("Naught.UserInterface.ButtonModule")
+end)
+
+-- Resolve dependencies
+local FontManager = container:resolve("FontManager")
+local GameLoop = container:resolve("GameLoop")
+local GameStateManager = container:resolve("GameStateManager")
+local ButtonModule = container:resolve("ButtonModule")
+local PlayerController = container:resolve("PlayerController")
+local BotController = container:resolve("BotController")
+local MainMenu = container:resolve("MainMenu")
 
 -- TODO:
 -- Seperate concerns (move initalization logic, game state management, and rendering into seperate modules)
@@ -24,13 +83,13 @@ local buttonModule = require("Naught.UserInterface.ButtonModule")
 
 function love.load()
     _config.load()
-    GameLoop.Init(FontManager, GameStateManager, mainMenu, _config)
+    GameLoop.Init(FontManager, GameStateManager, MainMenu, _config)
 end
 
 function love.draw()
-    GameLoop.Render(GameStateManager, buttonModule)
+    GameLoop.Render(GameStateManager, ButtonModule)
 end
 
 function love.mousepressed(x, y, button)
-    GameLoop.HandleMousePress(GameStateManager, x, y, button, buttonModule, playerController, botController)
+    GameLoop.HandleMousePress(GameStateManager, x, y, button, ButtonModule, PlayerController, BotController)
 end
